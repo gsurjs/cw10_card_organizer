@@ -3,10 +3,10 @@ import 'database_helper.dart';
 
 class CardsScreen extends StatefulWidget {
   final Map<String, dynamic> folder;
-  CardsScreen({required this.folder});
+  const CardsScreen({super.key, required this.folder});
 
   @override
-  _CardsScreenState createState() => _CardsScreenState();
+  State<CardsScreen> createState() => _CardsScreenState();
 }
 class _CardsScreenState extends State<CardsScreen> {
   final DatabaseHelper _dbHelper = DatabaseHelper();

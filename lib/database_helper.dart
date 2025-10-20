@@ -45,23 +45,27 @@ class DatabaseHelper {
     await _prepopulateData(db);
   }
   Future<void> _prepopulateData(Database db) async {
-    // Pre-defined folders [cite: 15]
+    // Pre-defined folders
     List<String> suits = ['Hearts', 'Spades', 'Diamonds', 'Clubs'];
+    Map<String, int> folderIds = {};
+
     for (String suit in suits) {
-      await db.insert('folders', {'name': suit, 'timestamp': DateTime.now().toIso8601String()});
+      int id = await db.insert('folders', {'name': suit, 'timestamp': DateTime.now().toIso8601String()});
+      folderIds[suit] = id;
     }
 
-    // Prepopulate cards (Ace, King, Queen) for simplicity [cite: 25]
-    Map<String, String> cardNames = {'A': 'Ace', 'K': 'King', 'Q': 'Queen'};
+    // Prepopulate cards (A, K, Q, J) for a fuller deck
+    Map<String, String> cardRanks = {'A': 'Ace', 'K': 'King', 'Q': 'Queen', 'J': 'Jack'};
     Map<String, String> suitShort = {'Hearts': 'H', 'Spades': 'S', 'Diamonds': 'D', 'Clubs': 'C'};
     
     for (String suit in suits) {
-      for (var entry in cardNames.entries) {
+      for (var entry in cardRanks.entries) {
+        int? folderId = (entry.key == 'A') ? folderIds[suit] : null;
         await db.insert('cards', {
           'name': '${entry.value} of $suit',
           'suit': suit,
           'imageUrl': 'https://deckofcardsapi.com/static/img/${entry.key}${suitShort[suit]}.png',
-          'folderId': null // Initially unassigned
+          'folderId': folderId 
         });
       }
     }
